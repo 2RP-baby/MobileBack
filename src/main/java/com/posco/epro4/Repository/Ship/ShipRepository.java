@@ -1,6 +1,5 @@
 package com.posco.epro4.Repository.Ship;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.posco.epro4.Contoller.PublicMethod.PMethod;
-import com.posco.epro4.DTO.Scc.SccSearchOneDTO;
 import com.posco.epro4.DTO.Ship.ShipSearchListDTO;
 import com.posco.epro4.DTO.Ship.ShipSearchOneDTO;
-import com.posco.epro4.VO.Scc.Scc1VO;
-import com.posco.epro4.VO.Scc.Scc2VO;
 import com.posco.epro4.VO.Ship.Ship1VO;
 import com.posco.epro4.VO.Ship.Ship2VO;
 
@@ -38,6 +34,8 @@ public class ShipRepository {
             String staff_name          = map.get("staff_name");
             String cost_center         = map.get("cost_center");
             String item_name           = map.get("item_name");
+            Integer page               = PMethod.getStringToInteger(map.get("page"));
+            int     maxLimit           = 10;
 
             String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipSearchListDTO(";
                   jpql += " scc1.scc1_id, scc1.shipment_num,";
@@ -62,12 +60,12 @@ public class ShipRepository {
                   jpql += " and ( :item_name is null or item.item = :item_name )";
 
             TypedQuery<ShipSearchListDTO> tq = em.createQuery(jpql, ShipSearchListDTO.class);
-            tq.setParameter("deliver_to_location", deliver_to_location);
-            tq.setParameter("staff_name",          staff_name);
-            tq.setParameter("cost_center",         cost_center);
-            tq.setParameter("item_name",           item_name);
-            // TODO: 10개씩 들고오도록 바꿔야됨
-            tq.setMaxResults(10);
+                                          tq.setParameter("deliver_to_location", deliver_to_location);
+                                          tq.setParameter("staff_name",          staff_name);
+                                          tq.setParameter("cost_center",         cost_center);
+                                          tq.setParameter("item_name",           item_name);
+                                          tq.setFirstResult(((page-1) * maxLimit));
+                                          tq.setMaxResults(10);
 
             resultList = tq.getResultList();
 
@@ -117,7 +115,7 @@ public class ShipRepository {
                   jpql += "order by scc2.seq asc";
 
             TypedQuery<ShipSearchOneDTO> tq = em.createQuery(jpql, ShipSearchOneDTO.class);
-            tq.setParameter("shipment_num", shipment_num);
+                                         tq.setParameter("shipment_num", shipment_num);
 
             resultList = tq.getResultList();
 

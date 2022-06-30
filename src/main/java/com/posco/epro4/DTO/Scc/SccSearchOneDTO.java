@@ -24,5 +24,5 @@ public class SccSearchOneDTO {
     private String  item_description;
     
     private String  vendor_name;
-    // private Integer remaining;
+    private Integer remaining;
 }

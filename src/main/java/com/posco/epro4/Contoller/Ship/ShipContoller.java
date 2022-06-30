@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.posco.epro4.Contoller.PublicMethod.*;
-import com.posco.epro4.DTO.Scc.SccInsertOneReqDTO;
 import com.posco.epro4.DTO.Ship.ShipInsertOneReqDTO;
 import com.posco.epro4.Repository.Ship.ShipRepository;
 
