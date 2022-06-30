@@ -80,22 +80,31 @@ public class SccRepository {
                                         //  tq.setMaxResults(maxLimit);
             resultList = tq.getResultList();
 
+            // 중복 데이터 필터
             List<String> selected_num_list = new ArrayList<>();
-            List<SccSearchListDTO> sendData = new ArrayList<SccSearchListDTO>();
-            int start_idx = (page-1) * maxLimit;
-            if(start_idx < 0) {
-                return sendData;
-            }
-            for(int i = start_idx, cnt = 0; i < resultList.size() && cnt < maxLimit; i++){
+            List<SccSearchListDTO> filteredData = new ArrayList<SccSearchListDTO>();
+            for(int i = 0; i < resultList.size(); i++){
                 SccSearchListDTO dto = resultList.get(i);
                 String num = dto.getPo_num();
                 if(!selected_num_list.contains(num)) {
                     selected_num_list.add(num);
-                    sendData.add(dto);
-                    cnt++;
+                    filteredData.add(dto);
                 }
             }
 
+            System.out.println("filtered size " + filteredData.size());
+
+            // paging
+            List<SccSearchListDTO> sendData = new ArrayList<SccSearchListDTO>();
+            int fromIdx = (page - 1) * maxLimit;
+            int size = filteredData.size();
+            // out of index
+            if(fromIdx >= size || fromIdx < 0) return sendData;
+            // 최대 표시 개수보다 적은 경우
+            if(size - fromIdx < maxLimit) maxLimit = size % maxLimit;
+            for(int i = fromIdx, cnt = 0; i < size && cnt < maxLimit; i++, cnt++) {
+                sendData.add(filteredData.get(i));
+            }
             return sendData;
 
         } catch(Exception e) {

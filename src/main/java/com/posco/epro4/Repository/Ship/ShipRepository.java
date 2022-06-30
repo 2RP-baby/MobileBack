@@ -1,5 +1,6 @@
 package com.posco.epro4.Repository.Ship;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,19 +24,22 @@ public class ShipRepository {
 
     public List<ShipSearchListDTO> shipSearchList(HashMap<String, String> map) {
 
-        List<ShipSearchListDTO> resultList = null;
+        List<ShipSearchListDTO> resultList = new ArrayList<>();
         EntityManager em = emf.createEntityManager();
         
         System.out.println("map : " + map.toString());
 
         try{
 
-            String deliver_to_location = map.get("deliver_to_location");
-            String staff_name          = map.get("staff_name");
-            String cost_center         = map.get("cost_center");
-            String item_name           = map.get("item_name");
-            Integer page               = PMethod.getStringToInteger(map.get("page"));
-            int     maxLimit           = 10;
+            String  deliver_to_location = map.get("deliver_to_location");
+            String  staff_name          = map.get("staff_name");
+            String  cost_center         = map.get("cost_center");
+            String  item_name           = map.get("item_name");
+            Integer page                = PMethod.getStringToInteger(map.get("page"));
+            int     maxLimit            = 10;
+            int     fromIdx             = (page-1) * maxLimit;
+            
+            if(fromIdx < 0) return resultList;
 
             String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipSearchListDTO(";
                   jpql += " scc1.scc1_id, scc1.shipment_num,";
@@ -64,7 +68,7 @@ public class ShipRepository {
                                           tq.setParameter("staff_name",          staff_name);
                                           tq.setParameter("cost_center",         cost_center);
                                           tq.setParameter("item_name",           item_name);
-                                          tq.setFirstResult(((page-1) * maxLimit));
+                                          tq.setFirstResult(fromIdx);
                                           tq.setMaxResults(10);
 
             resultList = tq.getResultList();
@@ -149,9 +153,9 @@ public class ShipRepository {
                                 .setParameter("shipment_num", "%S"+temp_shipment_num+"%")
                                 .setMaxResults(1)
                                 .getResultList();
-            String[] temp = null;
+
             if(res.size() > 0) {
-                temp = res.get(0).split("-");
+                String[] temp = res.get(0).split("-");
                 temp_shipment_num = temp[0] + "-" + (PMethod.getStringToInteger(temp[1]) + 1);
             } else {
                 temp_shipment_num = "S" + temp_shipment_num + "-" + "1";
