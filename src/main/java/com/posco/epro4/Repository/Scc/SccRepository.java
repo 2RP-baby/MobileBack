@@ -80,20 +80,23 @@ public class SccRepository {
                                         //  tq.setMaxResults(maxLimit);
             resultList = tq.getResultList();
 
-            // List<String> selected_po_num_list = new ArrayList<>();
-            // List<SccSearchListDTO> sendData = new ArrayList<SccSearchListDTO>();
-            // int start_idx = (page-1) * maxLimit;
-            // for(int i = start_idx, cnt = 0; i < resultList.size() && cnt < maxLimit; i++){
-            //     SccSearchListDTO dto = resultList.get(i);
-            //     String num = dto.getPo_num();
-            //     if(!selected_po_num_list.contains(num)) {
-            //         selected_num
-            //         sendData.add(dto);
-            //         cnt++;
-            //     }
-            // }
+            List<String> selected_num_list = new ArrayList<>();
+            List<SccSearchListDTO> sendData = new ArrayList<SccSearchListDTO>();
+            int start_idx = (page-1) * maxLimit;
+            if(start_idx < 0) {
+                return sendData;
+            }
+            for(int i = start_idx, cnt = 0; i < resultList.size() && cnt < maxLimit; i++){
+                SccSearchListDTO dto = resultList.get(i);
+                String num = dto.getPo_num();
+                if(!selected_num_list.contains(num)) {
+                    selected_num_list.add(num);
+                    sendData.add(dto);
+                    cnt++;
+                }
+            }
 
-            return resultList;
+            return sendData;
 
         } catch(Exception e) {
             System.out.println("sccSearchList Error !!!");
