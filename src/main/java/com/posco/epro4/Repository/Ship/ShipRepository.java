@@ -42,26 +42,28 @@ public class ShipRepository {
             if(fromIdx < 0) return resultList;
 
             String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipSearchListDTO(";
-                  jpql += " scc1.scc1_id, scc1.shipment_num,";
-                  jpql += " po1.po_num, po1.comments,";
-                  jpql += " staff.name,";
-                  jpql += " scc1.deliver_to_location, scc1.send_date,";
-                  jpql += " ( select sum(scc2.quantity_ordered) from scc2";
-                  jpql += "   where scc2.scc1_id = scc1.scc1_id";
-                  jpql += "   ) as scc_amount";
+                  jpql += "     scc1.scc1_id, scc1.shipment_num,";
+                  jpql += "     po1.po_num, po1.comments,";
+                  jpql += "     staff.name,";
+                  jpql += "     scc1.deliver_to_location, scc1.send_date,";
+                  jpql += "     ( select sum(scc2.quantity_ordered)";
+                  jpql += "       from scc2";
+                  jpql += "       where scc2.scc1_id = scc1.scc1_id )";
                   jpql += " )";
 
                   jpql += " from Scc1VO scc1";
-                  jpql += " left join Po1VO po1 on (po1.po_header_id = scc1.po_header_id)";
-                  jpql += " left join Scc2VO scc2 on (scc2.scc1_id = scc1.scc1_id)";
-                  jpql += " left join Po2VO po2 on (po2.po_line_id = scc2.po_line_id)";
-                  jpql += " left join StaffVO staff on (staff.id = scc1.employee_number)";
-                  jpql += " left join ItemVO item on (item.item_id = po2.item_id)";
+                  jpql += " join Po1VO po1 on (po1.po_header_id = scc1.po_header_id)";
+                  jpql += " join Scc2VO scc2 on (scc2.scc1_id = scc1.scc1_id)";
+                  jpql += " join Po2VO po2 on (po2.po_line_id = scc2.po_line_id)";
+                  jpql += " join StaffVO staff on (staff.id = scc1.employee_number)";
+                  jpql += " join ItemVO item on (item.item_id = po2.item_id)";
 
                   jpql += " where ( :deliver_to_location is null or scc1.deliver_to_location = :deliver_to_location )";
                   jpql += " and ( :staff_name is null or staff.name = :staff_name )";
                   jpql += " and ( :cost_center is null or scc2.cost_center = :cost_center )";
                   jpql += " and ( :item_name is null or item.item = :item_name )";
+
+                  jpql += " order by scc1.scc1_id desc";
 
             TypedQuery<ShipSearchListDTO> tq = em.createQuery(jpql, ShipSearchListDTO.class);
                                           tq.setParameter("deliver_to_location", deliver_to_location);
@@ -97,14 +99,13 @@ public class ShipRepository {
 
             String shipment_num = map.get("shipment_num");
 
-            // TODO: 잔량 가져와야됨
             String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipSearchOneDTO(";
-                  jpql += " scc1.scc1_id, scc1.shipment_num, scc1.deliver_to_location,";
-                  jpql += " scc2.scc2_id, scc2.seq, scc2.quantity_ordered, scc2.need_by_date, scc2.comment, scc2.po_distribution_id,";
-                  jpql += " po1.po_header_id, po1.po_num,";
-                  jpql += " po2.po_line_id, po2.unit_price, po2.quantity,";
-                  jpql += " item.item, item.uom, item.description,";
-                  jpql += " staff.name";
+                  jpql += "     scc1.scc1_id, scc1.shipment_num, scc1.deliver_to_location,";
+                  jpql += "     scc2.scc2_id, scc2.seq, scc2.quantity_ordered, scc2.need_by_date, scc2.comment, scc2.po_distribution_id,";
+                  jpql += "     po1.po_header_id, po1.po_num,";
+                  jpql += "     po2.po_line_id, po2.unit_price, po2.mat_bpa_agree_qt,";
+                  jpql += "     item.item, item.uom, item.description,";
+                  jpql += "     staff.name";
                   jpql += " )";
 
                   jpql += " from Scc1VO scc1";

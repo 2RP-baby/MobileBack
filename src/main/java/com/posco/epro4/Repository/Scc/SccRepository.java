@@ -41,25 +41,25 @@ public class SccRepository {
             int     maxLimit         = 10;
 
             String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchListDTO(";
-                  jpql += " po1.po_num, po1.comments,";
-                  jpql += " po4_1.promised_date,";
-                  jpql += " po5.destination_subinventory,";
-                  jpql += " staff.dept_code, staff.name,";
-                  jpql += " vendor.vendor_name";
+                  jpql += "     po1.po_header_id, po1.po_num, po1.comments,";
+                  jpql += "     po4_1.promised_date,";
+                  jpql += "     po5.destination_subinventory,";
+                  jpql += "     staff.dept_code, staff.name,";
+                  jpql += "     vendor.vendor_name";
                   jpql += " )";
                   
                   jpql += " from Po1VO po1";
-                  jpql += " left join Po2VO po2 on (po2.po_header_id = po1.po_header_id)";
+                  jpql += " join Po2VO po2 on (po2.po_header_id = po1.po_header_id)";
                   jpql += " left join Po4VO po4_1 on (po4_1.po_line_id = po2.po_line_id)";
                   jpql += " left join Po4VO po4_2 on (po4_2.po_line_id = po2.po_line_id)";
-                  jpql += "   and po4_1.promised_date < po4_2.promised_date";
-                  jpql += " left join Po5VO po5 on (po5.po_line_location_id = po4_1.po_line_location_id)";
-                  jpql += " left join StaffVO staff on (staff.id = po5.request_person_id)";
-                  jpql += " left join VendorVO vendor on (vendor.vendor_id = po1.vendor_id)";
-                  jpql += " left join ItemVO item on (item.item_id = po2.item_id)";
+                  jpql += "     and po4_1.promised_date < po4_2.promised_date";
+                  jpql += " join Po5VO po5 on (po5.po_line_location_id = po4_1.po_line_location_id)";
+                  jpql += " join StaffVO staff on (staff.id = po5.request_person_id)";
+                  jpql += " join VendorVO vendor on (vendor.vendor_id = po1.vendor_id)";
+                  jpql += " join ItemVO item on (item.item_id = po2.item_id)";
 
                   jpql += " where po4_2.promised_date is null";
-                  jpql += " and po4_1.promised_date is not null";
+                //   jpql += " and po4_1.promised_date is not null";
                   jpql += " and ( :po_num is null or po1.po_num = :po_num )";
                   jpql += " and ( :staff_name is null or staff.name = :staff_name )";
                   jpql += " and ( :staff_dept_code is null or staff.dept_code = :staff_dept_code )";
@@ -76,9 +76,11 @@ public class SccRepository {
                                          tq.setParameter("subinventory",     subinventory);
                                          tq.setParameter("vendor_name",      vendor_name);
                                          tq.setParameter("item_name",        item_name);
-                                        //  tq.setFirstResult(((page-1) * maxLimit));
-                                        //  tq.setMaxResults(maxLimit);
+                                         tq.setFirstResult(((page-1) * maxLimit));
+                                         tq.setMaxResults(maxLimit);
             resultList = tq.getResultList();
+
+            // return resultList;
 
             // 중복 데이터 필터
             List<String> selected_num_list = new ArrayList<>();
@@ -130,13 +132,14 @@ public class SccRepository {
             String po_num = map.get("po_num");
 
             String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchOneDTO(";
-                  jpql += " po1.po_header_id, po1.po_num, po1.comments,";
-                  jpql += " po2.po_line_id, po2.unit_price, po2.quantity,";
-                  jpql += " po5.po_distribution_id, po5.destination_subinventory,";
-                  jpql += " item.item, item.uom, item.description,";
-                  jpql += " vendor.vendor_name,";
-                  // TODO: 잔량 가져와야됨
-                  jpql += " 20";
+                  jpql += "     po1.po_header_id, po1.po_num, po1.comments,";
+                  jpql += "     po2.po_line_id, po2.unit_price, po2.mat_bpa_agree_qt,";
+                  jpql += "     po5.po_distribution_id, po5.destination_subinventory,";
+                  jpql += "     item.item, item.uom, item.description,";
+                  jpql += "     vendor.vendor_id, vendor.vendor_name,";
+                  jpql += "     ( po2.mat_bpa_agree_qt - ( select sum(scc2.quantity_ordered)";
+                  jpql += "                                from Scc2VO scc2";
+                  jpql += "                                where po2.po_line_id = scc2.po_line_id ))";
                   jpql += " )";
 
                   jpql += " from Po1VO po1";

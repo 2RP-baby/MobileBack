@@ -16,7 +16,8 @@ public class Po2VO {
     private Integer po_line_id;
     private Integer item_id; // join
     private Integer unit_price;
-    private Integer quantity;
+    // private Integer quantity;
+    private Integer mat_bpa_agree_qt;
     //FK
     private Integer po_header_id;
 

@@ -23,6 +23,7 @@ public class SccSearchOneDTO {
     private String  item_uom;
     private String  item_description;
     
+    private Integer vendor_id;
     private String  vendor_name;
-    private Integer remaining;
+    private Long    remaining;
 }
