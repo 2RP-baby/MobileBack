@@ -94,7 +94,6 @@ public class SccRepository {
                 }
             }
 
-            System.out.println("filtered size " + filteredData.size());
 
             // paging
             List<SccSearchListDTO> sendData = new ArrayList<SccSearchListDTO>();
