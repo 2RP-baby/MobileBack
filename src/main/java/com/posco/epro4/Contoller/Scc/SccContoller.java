@@ -60,4 +60,13 @@ public class SccContoller {
         return sccRepository.sccInsertOne(scc1, scc2List);
     }
     
+    @RequestMapping(value = "sccSearchInsertedOne", method = RequestMethod.POST)
+    public Object sccSearchInsertedOne(@RequestBody HashMap<String, String> map) {
+
+        System.out.println("param : " + map);
+
+        PMethod.setEmptyValueInMap(map, null);
+
+        return sccRepository.sccSearchInsertedOne(map);
+    }
 }

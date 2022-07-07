@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.posco.epro4.Contoller.PublicMethod.PMethod;
 import com.posco.epro4.DTO.Scc.SccSearchOneDTO;
+import com.posco.epro4.DTO.Scc.SccSearchInsertedOneDTO;
 import com.posco.epro4.DTO.Scc.SccSearchListDTO;
 import com.posco.epro4.VO.Scc.Scc1VO;
 import com.posco.epro4.VO.Scc.Scc2VO;
@@ -169,7 +170,7 @@ public class SccRepository {
         return null;
     }
 
-     public String sccInsertOne(HashMap<String, String> scc1, List<HashMap<String, String>> scc2List) {
+    public String sccInsertOne(HashMap<String, String> scc1, List<HashMap<String, String>> scc2List) {
 
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -256,4 +257,51 @@ public class SccRepository {
         return null;
     }
 
+    public List<SccSearchInsertedOneDTO> sccSearchInsertedOne(HashMap<String, String> map) {
+
+        List<SccSearchInsertedOneDTO> resultList = null;
+        EntityManager em = emf.createEntityManager();
+        
+        System.out.println("map : " + map.toString());
+
+        try{
+
+            String po_num = map.get("po_num");
+
+            String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchInsertedOneDTO(";
+                  jpql += "     scc1.scc1_id, scc1.deliver_to_location, scc1.comment, scc1.subinventory,";
+                  jpql += "     scc2.scc2_id, scc2.quantity_ordered, scc2.need_by_date, scc2.comment,";
+                  jpql += "     po2.unit_price,";
+                  jpql += "     item.item, item.uom, item.description,";
+                  jpql += "     vendor.vendor_name";
+                  jpql += " )";
+
+                  jpql += " from Po1VO po1";
+                  jpql += " join Scc1VO scc1 on (scc1.po_header_id = po1.po_header_id)";
+                  jpql += " join Scc2VO scc2 on (scc2.scc1_id = scc1.scc1_id)";
+                  jpql += " join Po2VO po2 on (po2.po_line_id = scc2.po_line_id)";
+                  jpql += " join ItemVO item on (item.item_id = po2.item_id)";
+                  jpql += " join VendorVO vendor on (vendor.vendor_id = po1.vendor_id)";
+
+                  jpql += " where ( :po_num is null or po1.po_num = :po_num )";
+
+                  jpql += " order by scc1.scc1_id desc";
+
+            TypedQuery<SccSearchInsertedOneDTO> tq = em.createQuery(jpql, SccSearchInsertedOneDTO.class);
+                                        tq.setParameter("po_num", po_num);
+
+            resultList = tq.getResultList();
+
+            return resultList;
+
+        } catch(Exception e) {
+            System.out.println("sccSearchInsertedOne Error !!!");
+            e.printStackTrace();
+
+        } finally {
+            em.close();
+        }
+
+        return null;
+    }
 }
