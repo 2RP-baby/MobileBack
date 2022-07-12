@@ -133,7 +133,7 @@ public class SccRepository {
 
             String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchOneDTO(";
                   jpql += "     po1.po_header_id, po1.po_num, po1.comments,";
-                  jpql += "     po2.po_line_id, po2.unit_price, po2.mat_bpa_agree_qt,";
+                  jpql += "     po2.po_line_id, po2.unit_price, po2.mat_bpa_agree_qt, 0,";
                   jpql += "     po5.po_distribution_id, po5.destination_subinventory,";
                   jpql += "     item.item, item.uom, item.description,";
                   jpql += "     vendor.vendor_id, vendor.vendor_name,";

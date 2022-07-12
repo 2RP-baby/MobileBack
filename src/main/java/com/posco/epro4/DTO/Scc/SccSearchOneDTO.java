@@ -15,6 +15,7 @@ public class SccSearchOneDTO {
     private Integer po_line_id;
     private Integer unit_price;
     private Integer quantity;
+    private Integer quantity_ordered;
 
     private Integer po_distribution_id;
     private String  subinventory;
