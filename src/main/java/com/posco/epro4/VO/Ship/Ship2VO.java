@@ -22,5 +22,6 @@ public class Ship2VO {
 	private Integer po_distribution_id;
 	private Integer scc1_id;
 	private Integer scc2_id;
+	private Integer ship1_id;
 
 }

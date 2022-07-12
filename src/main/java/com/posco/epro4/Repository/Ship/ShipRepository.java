@@ -188,7 +188,6 @@ public class ShipRepository {
 
 
             // #region ship2
-            // PR2 생성
             int seq = 1;
             for (HashMap<String,String> ship2 : ship2List) {
                 
@@ -200,6 +199,7 @@ public class ShipRepository {
                 ship2vo.setPo_distribution_id(PMethod.getStringToInteger(ship2.get("po_distribution_id")));
                 ship2vo.setScc1_id(ship1vo.getScc1_id());
                 ship2vo.setScc2_id(PMethod.getStringToInteger(ship2.get("scc2_id")));
+                ship2vo.setShip1_id(ship1vo.getShip1_id());
 
                 em.persist(ship2vo);
             }
