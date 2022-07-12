@@ -269,7 +269,7 @@ public class SccRepository {
             String po_num = map.get("po_num");
 
             String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchInsertedOneDTO(";
-                  jpql += "     scc1.scc1_id, scc1.deliver_to_location, scc1.comment, scc1.subinventory,";
+                  jpql += "     scc1.scc1_id, scc1.shipment_num, scc1.deliver_to_location, scc1.comment, scc1.subinventory,";
                   jpql += "     scc2.scc2_id, scc2.quantity_ordered, scc2.need_by_date, scc2.comment,";
                   jpql += "     po2.unit_price,";
                   jpql += "     item.item, item.uom, item.description,";
