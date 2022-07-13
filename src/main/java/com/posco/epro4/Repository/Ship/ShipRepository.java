@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.posco.epro4.Contoller.PublicMethod.PMethod;
 import com.posco.epro4.DTO.Ship.ShipCurSearchListDTO;
+import com.posco.epro4.DTO.Ship.ShipSearchInsertedOneDTO;
 import com.posco.epro4.DTO.Ship.ShipSearchListDTO;
 import com.posco.epro4.DTO.Ship.ShipSearchOneDTO;
 import com.posco.epro4.VO.Ship.Ship1VO;
@@ -309,4 +310,52 @@ public class ShipRepository {
     }
 
 
+    public Object shipSearchInsertedOne(HashMap<String, String> map) {
+
+        EntityManager em = emf.createEntityManager();
+        
+        System.out.println("map : " + map.toString());
+
+        try{
+
+            String shipment_num = map.get("shipment_num");
+
+            String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipSearchInsertedOneDTO("
+                        + "     ship1.shipment_num, ship1.shipped_date, ship1.expected_receipt_date, "
+                        + "     ship1.contact_name, ship1.note_to_receiver, "
+                        + "     scc1.deliver_to_location, scc1.comment, "
+                        + "     ship2.quantity_shipped, "
+                        + "     scc2.quantity_ordered, scc2.need_by_date, "
+                        + "     po2.unit_price, "
+                        + "     staff.name, "
+                        + "     item.item, item.uom, item.description "
+                        + ")"
+            
+                        + "from Ship1VO ship1 "
+                        + "join Ship2VO ship2 on ship2.ship1_id = ship1.ship1_id "
+                        + "join Scc1VO scc1 on scc1.scc1_id = ship1.scc1_id "
+                        + "join Scc2VO scc2 on scc2.scc2_id = ship2.scc2_id "
+                        + "join Po2VO po2 on po2.po_line_id = ship2.po_line_id "
+                        + "join ItemVO item on item.item_id = po2.item_id "
+                        + "join StaffVO staff on staff.id = scc1.employee_number "
+            
+                        + "where ( :shipment_num is null or ship1.shipment_num = :shipment_num ) "
+                        ;
+
+            List<ShipSearchInsertedOneDTO> resultList = em.createQuery(jpql, ShipSearchInsertedOneDTO.class)
+                                                          .setParameter("shipment_num", shipment_num)
+                                                          .getResultList();
+
+            return resultList;
+
+        } catch(Exception e) {
+            System.out.println("shipSearchInsertedOne Error !!!");
+            e.printStackTrace();
+
+        } finally {
+            em.close();
+        }
+
+        return null;
+    }
 }

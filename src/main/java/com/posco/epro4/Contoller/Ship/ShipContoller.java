@@ -70,5 +70,14 @@ public class ShipContoller {
         return shipRepository.shipCurSearchList(map);
     }
 
+    @RequestMapping(value = "shipSearchInsertedOne", method = RequestMethod.POST)
+    public Object shipSearchInsertedOne(@RequestBody HashMap<String, String> map) {
+
+        System.out.println("param : " + map);
+
+        PMethod.setEmptyValueInMap(map, null);
+
+        return shipRepository.shipSearchInsertedOne(map);
+    }
     
 }
