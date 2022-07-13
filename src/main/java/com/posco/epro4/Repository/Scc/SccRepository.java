@@ -269,13 +269,13 @@ public class SccRepository {
 
         try{
 
-            String  po_num           = map.get("po_num");
-            String  staff_name       = map.get("staff_name");
-            String  staff_dept_code  = map.get("staff_dept_code");
-            String  subinventory     = map.get("subinventory");
-            String  vendor_name      = map.get("vendor_name");
-            String  item_name        = map.get("item_name");
-            Integer page             = PMethod.getStringToInteger(map.get("page"));
+            String  shipment_num        = map.get("shipment_num");
+            String  staff_name          = map.get("staff_name");
+            String  deliver_to_location = map.get("deliver_to_location");
+            String  subinventory        = map.get("subinventory");
+            String  vendor_name         = map.get("vendor_name");
+            String  item_name           = map.get("item_name");
+            Integer page                = PMethod.getStringToInteger(map.get("page"));
 
             String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccCurSearchListDTO("
                         + "     scc1.shipment_num, scc1.send_date, "
@@ -307,9 +307,9 @@ public class SccRepository {
                         ;
 
             resultList = em.createQuery(jpql, SccCurSearchListDTO.class)
-                                        .setParameter("shipment_num",        po_num)
+                                        .setParameter("shipment_num",        shipment_num)
                                         .setParameter("staff_name",          staff_name)
-                                        .setParameter("deliver_to_location", staff_dept_code)
+                                        .setParameter("deliver_to_location", deliver_to_location)
                                         .setParameter("subinventory",        subinventory)
                                         .setParameter("vendor_name",         vendor_name)
                                         .setParameter("item_name",           item_name)
