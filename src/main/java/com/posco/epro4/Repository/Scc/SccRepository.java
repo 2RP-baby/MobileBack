@@ -344,7 +344,7 @@ public class SccRepository {
             return sendData;
 
         } catch(Exception e) {
-            System.out.println("sccSearchList Error !!!");
+            System.out.println("sccCurSearchList Error !!!");
             e.printStackTrace();
 
         } finally {
