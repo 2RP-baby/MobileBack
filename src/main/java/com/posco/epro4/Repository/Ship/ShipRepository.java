@@ -222,4 +222,100 @@ public class ShipRepository {
         return null;
     }
 
+    
+    // public Object shipCurSearchList(HashMap<String, String> map) {
+
+    //     List<SccCurSearchListDTO> resultList = null;
+    //     EntityManager em = emf.createEntityManager();
+        
+    //     System.out.println("map : " + map.toString());
+
+    //     try{
+
+    //         String  shipment_num        = map.get("shipment_num");
+    //         String  staff_name          = map.get("staff_name");
+    //         String  deliver_to_location = map.get("deliver_to_location");
+    //         String  subinventory        = map.get("subinventory");
+    //         String  vendor_name         = map.get("vendor_name");
+    //         String  item_name           = map.get("item_name");
+    //         Integer page                = PMethod.getStringToInteger(map.get("page"));
+
+    //         String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccCurSearchListDTO("
+    //                     + "     scc1.shipment_num, scc1.send_date, "
+    //                     + "     po1.comments, "
+    //                     + "     po5.destination_subinventory, "
+    //                     + "     staff.dept_code, staff.name, "
+    //                     // + "     item.item_id, item.item, "
+    //                     + "     vendor.vendor_name "
+    //                     + ")"
+
+    //                     + "from Scc1VO scc1 "
+    //                     + "join Scc2VO scc2 on scc2.scc1_id = scc1.scc1_id "
+    //                     + "join Po1VO po1 on po1.po_header_id = scc1.po_header_id "
+    //                     + "join Po2VO po2 on po2.po_line_id = scc2.po_line_id "
+    //                     + "join Po5VO po5 on po5.po_distribution_id = scc2.po_distribution_id "
+    //                     + "join StaffVO staff on staff.id = scc1.employee_number "
+    //                     + "join VendorVO vendor on vendor.vendor_id = po1.vendor_id "
+    //                     + "join ItemVO item on item.item_id = po2.item_id "
+
+    //                     + "where po5.destination_subinventory is not null "
+    //                     + "  and ( :shipment_num is null or scc1.shipment_num = :shipment_num ) "
+    //                     + "  and ( :staff_name is null or staff.name = :staff_name ) "
+    //                     + "  and ( :deliver_to_location is null or scc1.deliver_to_location = :deliver_to_location ) "
+    //                     + "  and ( :subinventory is null or po5.destination_subinventory = :subinventory ) "
+    //                     + "  and ( :vendor_name is null or vendor.vendor_name = :vendor_name ) "
+    //                     + "  and ( :item_name is null or item.item = :item_name ) "
+
+    //                     + "order by scc1.shipment_num desc "
+    //                     ;
+
+    //         resultList = em.createQuery(jpql, SccCurSearchListDTO.class)
+    //                                     .setParameter("shipment_num",        shipment_num)
+    //                                     .setParameter("staff_name",          staff_name)
+    //                                     .setParameter("deliver_to_location", deliver_to_location)
+    //                                     .setParameter("subinventory",        subinventory)
+    //                                     .setParameter("vendor_name",         vendor_name)
+    //                                     .setParameter("item_name",           item_name)
+    //                                     .getResultList();
+
+    //         // return resultList;
+
+    //         // 중복 데이터 필터
+    //         List<String> selected_num_list = new ArrayList<>();
+    //         List<SccCurSearchListDTO> filteredData = new ArrayList<SccCurSearchListDTO>();
+    //         for(int i = 0; i < resultList.size(); i++){
+    //             SccCurSearchListDTO dto = resultList.get(i);
+    //             String num = dto.getScc1_shipment_num();
+    //             if(!selected_num_list.contains(num)) {
+    //                 selected_num_list.add(num);
+    //                 filteredData.add(dto);
+    //             }
+    //         }
+
+
+    //         // paging
+    //         List<SccCurSearchListDTO> sendData = new ArrayList<SccCurSearchListDTO>();
+    //         int fromIdx = (page - 1) * maxLimit;
+    //         int size = filteredData.size();
+    //         // out of index
+    //         if(fromIdx >= size || fromIdx < 0) return sendData;
+    //         // 최대 표시 개수보다 적은 경우
+    //         if(size - fromIdx < maxLimit) maxLimit = size % maxLimit;
+    //         for(int i = fromIdx, cnt = 0; i < size && cnt < maxLimit; i++, cnt++) {
+    //             sendData.add(filteredData.get(i));
+    //         }
+    //         return sendData;
+
+    //     } catch(Exception e) {
+    //         System.out.println("sccSearchList Error !!!");
+    //         e.printStackTrace();
+
+    //     } finally {
+    //         em.close();
+    //     }
+
+    //     return null;
+    // }
+
+
 }
