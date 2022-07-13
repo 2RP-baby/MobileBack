@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.posco.epro4.Contoller.PublicMethod.PMethod;
 import com.posco.epro4.DTO.Scc.SccSearchOneDTO;
+import com.posco.epro4.DTO.Scc.SccCurSearchListDTO;
 import com.posco.epro4.DTO.Scc.SccSearchInsertedOneDTO;
 import com.posco.epro4.DTO.Scc.SccSearchListDTO;
 import com.posco.epro4.VO.Scc.Scc1VO;
@@ -19,6 +20,7 @@ import com.posco.epro4.VO.Scc.Scc2VO;
 
 @Repository
 public class SccRepository {
+    private int maxLimit = 10;
     
     @Autowired
     private EntityManagerFactory emf;
@@ -39,7 +41,6 @@ public class SccRepository {
             String  vendor_name      = map.get("vendor_name");
             String  item_name        = map.get("item_name");
             Integer page             = PMethod.getStringToInteger(map.get("page"));
-            int     maxLimit         = 10;
 
             String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchListDTO(";
                   jpql += "     po1.po_header_id, po1.po_num, po1.comments,";
@@ -257,6 +258,103 @@ public class SccRepository {
         return null;
     }
 
+
+    
+    public Object sccCurSearchList(HashMap<String, String> map) {
+
+        List<SccCurSearchListDTO> resultList = null;
+        EntityManager em = emf.createEntityManager();
+        
+        System.out.println("map : " + map.toString());
+
+        try{
+
+            String  po_num           = map.get("po_num");
+            String  staff_name       = map.get("staff_name");
+            String  staff_dept_code  = map.get("staff_dept_code");
+            String  subinventory     = map.get("subinventory");
+            String  vendor_name      = map.get("vendor_name");
+            String  item_name        = map.get("item_name");
+            Integer page             = PMethod.getStringToInteger(map.get("page"));
+
+            String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccCurSearchListDTO("
+                        + "     scc1.shipment_num, scc1.send_date, "
+                        + "     po1.comments, "
+                        + "     po5.destination_subinventory, "
+                        + "     staff.dept_code, staff.name, "
+                        // + "     item.item_id, item.item, "
+                        + "     vendor.vendor_name "
+                        + ")"
+
+                        + "from Scc1VO scc1 "
+                        + "join Scc2VO scc2 on scc2.scc1_id = scc1.scc1_id "
+                        + "join Po1VO po1 on po1.po_header_id = scc1.po_header_id "
+                        + "join Po2VO po2 on po2.po_line_id = scc2.po_line_id "
+                        + "join Po5VO po5 on po5.po_distribution_id = scc2.po_distribution_id "
+                        + "join StaffVO staff on staff.id = scc1.employee_number "
+                        + "join VendorVO vendor on vendor.vendor_id = po1.vendor_id "
+                        + "join ItemVO item on item.item_id = po2.item_id "
+
+                        + "where po5.destination_subinventory is not null "
+                        + "  and ( :shipment_num is null or scc1.shipment_num = :shipment_num ) "
+                        + "  and ( :staff_name is null or staff.name = :staff_name ) "
+                        + "  and ( :deliver_to_location is null or scc1.deliver_to_location = :deliver_to_location ) "
+                        + "  and ( :subinventory is null or po5.destination_subinventory = :subinventory ) "
+                        + "  and ( :vendor_name is null or vendor.vendor_name = :vendor_name ) "
+                        + "  and ( :item_name is null or item.item = :item_name ) "
+
+                        + "order by scc1.shipment_num desc "
+                        ;
+
+            resultList = em.createQuery(jpql, SccCurSearchListDTO.class)
+                                        .setParameter("shipment_num",        po_num)
+                                        .setParameter("staff_name",          staff_name)
+                                        .setParameter("deliver_to_location", staff_dept_code)
+                                        .setParameter("subinventory",        subinventory)
+                                        .setParameter("vendor_name",         vendor_name)
+                                        .setParameter("item_name",           item_name)
+                                        .getResultList();
+
+            // return resultList;
+
+            // 중복 데이터 필터
+            List<String> selected_num_list = new ArrayList<>();
+            List<SccCurSearchListDTO> filteredData = new ArrayList<SccCurSearchListDTO>();
+            for(int i = 0; i < resultList.size(); i++){
+                SccCurSearchListDTO dto = resultList.get(i);
+                String num = dto.getScc1_shipment_num();
+                if(!selected_num_list.contains(num)) {
+                    selected_num_list.add(num);
+                    filteredData.add(dto);
+                }
+            }
+
+
+            // paging
+            List<SccCurSearchListDTO> sendData = new ArrayList<SccCurSearchListDTO>();
+            int fromIdx = (page - 1) * maxLimit;
+            int size = filteredData.size();
+            // out of index
+            if(fromIdx >= size || fromIdx < 0) return sendData;
+            // 최대 표시 개수보다 적은 경우
+            if(size - fromIdx < maxLimit) maxLimit = size % maxLimit;
+            for(int i = fromIdx, cnt = 0; i < size && cnt < maxLimit; i++, cnt++) {
+                sendData.add(filteredData.get(i));
+            }
+            return sendData;
+
+        } catch(Exception e) {
+            System.out.println("sccSearchList Error !!!");
+            e.printStackTrace();
+
+        } finally {
+            em.close();
+        }
+
+        return null;
+    }
+
+
     public List<SccSearchInsertedOneDTO> sccSearchInsertedOne(HashMap<String, String> map) {
 
         List<SccSearchInsertedOneDTO> resultList = null;
@@ -266,30 +364,31 @@ public class SccRepository {
 
         try{
 
-            String po_num = map.get("po_num");
+            String shipment_num = map.get("shipment_num");
 
-            String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchInsertedOneDTO(";
-                  jpql += "     scc1.scc1_id, scc1.shipment_num, scc1.deliver_to_location, scc1.comment, scc1.subinventory,";
-                  jpql += "     scc2.scc2_id, scc2.quantity_ordered, scc2.need_by_date, scc2.comment,";
-                  jpql += "     po2.unit_price,";
-                  jpql += "     item.item, item.uom, item.description,";
-                  jpql += "     vendor.vendor_name";
-                  jpql += " )";
+            String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchInsertedOneDTO("
+                        + "     scc1.scc1_id, scc1.shipment_num, scc1.deliver_to_location, scc1.comment, scc1.subinventory,"
+                        + "     scc2.scc2_id, scc2.quantity_ordered, scc2.need_by_date, scc2.comment,"
+                        + "     po2.unit_price,"
+                        + "     item.item, item.uom, item.description,"
+                        + "     vendor.vendor_name"
+                        + " )"
 
-                  jpql += " from Po1VO po1";
-                  jpql += " join Scc1VO scc1 on (scc1.po_header_id = po1.po_header_id)";
-                  jpql += " join Scc2VO scc2 on (scc2.scc1_id = scc1.scc1_id)";
-                  jpql += " join Po2VO po2 on (po2.po_line_id = scc2.po_line_id)";
-                  jpql += " join ItemVO item on (item.item_id = po2.item_id)";
-                  jpql += " join VendorVO vendor on (vendor.vendor_id = po1.vendor_id)";
+                        + " from Po1VO po1"
+                        + " join Scc1VO scc1 on (scc1.po_header_id = po1.po_header_id)"
+                        + " join Scc2VO scc2 on (scc2.scc1_id = scc1.scc1_id)"
+                        + " join Po2VO po2 on (po2.po_line_id = scc2.po_line_id)"
+                        + " join ItemVO item on (item.item_id = po2.item_id)"
+                        + " join VendorVO vendor on (vendor.vendor_id = po1.vendor_id)"
 
-                  jpql += " where ( :po_num is null or po1.po_num = :po_num )";
+                        + " where ( :shipment_num is null or scc1.shipment_num = :shipment_num )"
 
-                  jpql += " order by scc1.scc1_id desc";
+                        + " order by scc1.scc1_id desc"
+                        ;
 
-            TypedQuery<SccSearchInsertedOneDTO> tq = em.createQuery(jpql, SccSearchInsertedOneDTO.class);
-                                        tq.setParameter("po_num", po_num);
-
+            TypedQuery<SccSearchInsertedOneDTO> tq = em.createQuery(jpql, SccSearchInsertedOneDTO.class)
+                                                       .setParameter("shipment_num", shipment_num)
+                                                       ;
             resultList = tq.getResultList();
 
             return resultList;

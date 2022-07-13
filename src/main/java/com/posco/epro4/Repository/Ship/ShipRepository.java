@@ -18,6 +18,7 @@ import com.posco.epro4.VO.Ship.Ship2VO;
 
 @Repository
 public class ShipRepository {
+    private int maxLimit = 10;
     
     @Autowired
     private EntityManagerFactory emf;
@@ -36,7 +37,6 @@ public class ShipRepository {
             String  cost_center         = map.get("cost_center");
             String  item_name           = map.get("item_name");
             Integer page                = PMethod.getStringToInteger(map.get("page"));
-            int     maxLimit            = 10;
             int     fromIdx             = (page-1) * maxLimit;
             
             if(fromIdx < 0) return resultList;
@@ -71,7 +71,7 @@ public class ShipRepository {
                                           tq.setParameter("cost_center",         cost_center);
                                           tq.setParameter("item_name",           item_name);
                                           tq.setFirstResult(fromIdx);
-                                          tq.setMaxResults(10);
+                                          tq.setMaxResults(maxLimit);
 
             resultList = tq.getResultList();
 
