@@ -43,46 +43,51 @@ public class SccRepository {
             Integer page             = PMethod.getStringToInteger(map.get("page"));
             int     fromIdx          = (page-1) * maxLimit;
 
-            String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchListDTO(";
-                  jpql += "     po1.po_header_id, po1.po_num, po1.comments,";
-                  jpql += "     po4_1.promised_date,";
-                  jpql += "     po5.destination_subinventory,";
-                  jpql += "     staff.dept_code, staff.name,";
-                  jpql += "     vendor.vendor_name";
-                  jpql += " )";
-                  
-                  jpql += " from Po1VO po1";
-                  jpql += " join Po2VO po2 on (po2.po_header_id = po1.po_header_id)";
-                  jpql += " left join Po4VO po4_1 on (po4_1.po_line_id = po2.po_line_id)";
-                  jpql += " left join Po4VO po4_2 on (po4_2.po_line_id = po2.po_line_id)";
-                  jpql += "     and po4_1.promised_date < po4_2.promised_date";
-                  jpql += " join Po5VO po5 on (po5.po_line_location_id = po4_1.po_line_location_id)";
-                  jpql += " join StaffVO staff on (staff.id = po5.request_person_id)";
-                  jpql += " join VendorVO vendor on (vendor.vendor_id = po1.vendor_id)";
-                  jpql += " join ItemVO item on (item.item_id = po2.item_id)";
+            String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchListDTO("
+                        + "     po1.po_header_id, po1.po_num, po1.comments,"
+                        + "     po4_1.promised_date,"
+                        + "     po5.destination_subinventory,"
+                        + "     staff.dept_code, staff.name,"
+                        + "     vendor.vendor_name"
+                        + " )"
+                        
+                        + " from Po1VO po1"
+                        + " join Po2VO po2 on (po2.po_header_id = po1.po_header_id)"
+                        + " left join Po4VO po4_1 on (po4_1.po_line_id = po2.po_line_id)"
+                        + " left join Po4VO po4_2 on (po4_2.po_line_id = po2.po_line_id)"
+                        + "     and po4_1.promised_date < po4_2.promised_date"
+                        + " join Po5VO po5 on (po5.po_line_location_id = po4_1.po_line_location_id)"
+                        + " join StaffVO staff on (staff.id = po5.request_person_id)"
+                        + " join VendorVO vendor on (vendor.vendor_id = po1.vendor_id)"
+                        + " join ItemVO item on (item.item_id = po2.item_id)"
 
-                  jpql += " where po4_2.promised_date is null";
-                //   jpql += " and po4_1.promised_date is not null";
-                  jpql += " and ( :po_num is null or po1.po_num = :po_num )";
-                  jpql += " and ( :staff_name is null or staff.name = :staff_name )";
-                  jpql += " and ( :staff_dept_code is null or staff.dept_code = :staff_dept_code )";
-                  jpql += " and ( :subinventory is null or po5.destination_subinventory = :subinventory )";
-                  jpql += " and ( :vendor_name is null or vendor.vendor_name = :vendor_name )";
-                  jpql += " and ( :item_name is null or item.item = :item_name )";
+                        + " where po4_2.promised_date is null"
+                        // + " and po4_1.promised_date is not null"
+                        + " and ( :po_num is null or po1.po_num like :po_num2 )"
+                        + " and ( :staff_name is null or staff.name like :staff_name2 )"
+                        + " and ( :staff_dept_code is null or staff.dept_code like :staff_dept_code2 )"
+                        + " and ( :subinventory is null or po5.destination_subinventory like :subinventory2 )"
+                        + " and ( :vendor_name is null or vendor.vendor_name like :vendor_name2 )"
+                        + " and ( :item_name is null or item.item like :item_name2 )"
 
-                  jpql += " order by po1.po_num desc";
+                        + " order by po1.po_num desc"
+                        ;
 
-            TypedQuery<SccSearchListDTO> tq = em.createQuery(jpql, SccSearchListDTO.class);
-                                         tq.setParameter("po_num",           po_num);
-                                         tq.setParameter("staff_name",       staff_name);
-                                         tq.setParameter("staff_dept_code",  staff_dept_code);
-                                         tq.setParameter("subinventory",     subinventory);
-                                         tq.setParameter("vendor_name",      vendor_name);
-                                         tq.setParameter("item_name",        item_name);
-
+            TypedQuery<SccSearchListDTO> tq = em.createQuery(jpql, SccSearchListDTO.class)
+                                                .setParameter("po_num",           po_num)
+                                                .setParameter("staff_name",       staff_name)
+                                                .setParameter("staff_dept_code",  staff_dept_code)
+                                                .setParameter("subinventory",     subinventory)
+                                                .setParameter("vendor_name",      vendor_name)
+                                                .setParameter("item_name",        item_name)
+                                                .setParameter("po_num2",           "%"+po_num+"%")
+                                                .setParameter("staff_name2",       "%"+staff_name+"%")
+                                                .setParameter("staff_dept_code2",  "%"+staff_dept_code+"%")
+                                                .setParameter("subinventory2",     "%"+subinventory+"%")
+                                                .setParameter("vendor_name2",      "%"+vendor_name+"%")
+                                                .setParameter("item_name2",        "%"+item_name+"%")
+                                                ;
             resultList = tq.getResultList();
-
-            // return resultList;
 
             // 중복 데이터 필터
             List<String> selected_num_list = new ArrayList<>();
@@ -180,14 +185,15 @@ public class SccRepository {
             // #region scc1
             // * shipment_num 생성
             String temp_shipment_num = scc1.get("vendor_site_id");
-            String jpql = "select scc1.shipment_num";
-                  jpql += " from Scc1VO scc1";
-                  jpql += " where scc1.shipment_num like :shipment_num";
-                  jpql += " order by scc1.scc1_id desc";
+            String jpql = "select scc1.shipment_num"
+                        + " from Scc1VO scc1"
+                        + " where scc1.shipment_num like :shipment_num"
+                        + " order by scc1.scc1_id desc"
+                        ;
             List<String> res = em.createQuery(jpql, String.class)
-                                .setParameter("shipment_num", "%R"+temp_shipment_num+"%")
-                                .setMaxResults(1)
-                                .getResultList();
+                                 .setParameter("shipment_num", "%R"+temp_shipment_num+"%")
+                                 .setMaxResults(1)
+                                 .getResultList();
             String[] temp = null;
             if(res.size() > 0) {
                 temp = res.get(0).split("-");
@@ -294,12 +300,12 @@ public class SccRepository {
                         + "join ItemVO item on item.item_id = po2.item_id "
 
                         + "where po5.destination_subinventory is not null "
-                        + "  and ( :shipment_num is null or scc1.shipment_num = :shipment_num ) "
-                        + "  and ( :staff_name is null or staff.name = :staff_name ) "
-                        + "  and ( :deliver_to_location is null or scc1.deliver_to_location = :deliver_to_location ) "
-                        + "  and ( :subinventory is null or po5.destination_subinventory = :subinventory ) "
-                        + "  and ( :vendor_name is null or vendor.vendor_name = :vendor_name ) "
-                        + "  and ( :item_name is null or item.item = :item_name ) "
+                        + "  and ( :shipment_num is null or scc1.shipment_num like :shipment_num2 ) "
+                        + "  and ( :staff_name is null or staff.name like :staff_name2 ) "
+                        + "  and ( :deliver_to_location is null or scc1.deliver_to_location like :deliver_to_location2 ) "
+                        + "  and ( :subinventory is null or po5.destination_subinventory like :subinventory2 ) "
+                        + "  and ( :vendor_name is null or vendor.vendor_name like :vendor_name2 ) "
+                        + "  and ( :item_name is null or item.item like :item_name2 ) "
 
                         + "order by scc1.shipment_num desc "
                         ;
@@ -311,6 +317,12 @@ public class SccRepository {
                                         .setParameter("subinventory",        subinventory)
                                         .setParameter("vendor_name",         vendor_name)
                                         .setParameter("item_name",           item_name)
+                                        .setParameter("shipment_num2",        "%"+shipment_num+"%")
+                                        .setParameter("staff_name2",          "%"+staff_name+"%")
+                                        .setParameter("deliver_to_location2", "%"+deliver_to_location+"%")
+                                        .setParameter("subinventory2",        "%"+subinventory+"%")
+                                        .setParameter("vendor_name2",         "%"+vendor_name+"%")
+                                        .setParameter("item_name2",           "%"+item_name+"%")
                                         .getResultList();
 
             // return resultList;

@@ -44,30 +44,31 @@ public class ShipRepository {
             
             if(fromIdx < 0) return resultList;
 
-            String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipSearchListDTO(";
-                  jpql += "     scc1.scc1_id, scc1.shipment_num,";
-                  jpql += "     po1.po_num, po1.comments,";
-                  jpql += "     staff.name,";
-                  jpql += "     scc1.deliver_to_location, scc1.send_date,";
-                  jpql += "     ( select sum(scc2.quantity_ordered)";
-                  jpql += "       from scc2";
-                  jpql += "       where scc2.scc1_id = scc1.scc1_id )";
-                  jpql += " )";
+            String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipSearchListDTO("
+                        + "     scc1.scc1_id, scc1.shipment_num,"
+                        + "     po1.po_num, po1.comments,"
+                        + "     staff.name,"
+                        + "     scc1.deliver_to_location, scc1.send_date,"
+                        + "     ( select sum(scc2.quantity_ordered)"
+                        + "       from scc2"
+                        + "       where scc2.scc1_id = scc1.scc1_id )"
+                        + " )"
 
-                  jpql += " from Scc1VO scc1";
-                  jpql += " join Po1VO po1 on (po1.po_header_id = scc1.po_header_id)";
-                  jpql += " join Scc2VO scc2 on (scc2.scc1_id = scc1.scc1_id)";
-                  jpql += " join Po2VO po2 on (po2.po_line_id = scc2.po_line_id)";
-                  jpql += " join StaffVO staff on (staff.id = scc1.employee_number)";
-                  jpql += " join ItemVO item on (item.item_id = po2.item_id)";
+                        + " from Scc1VO scc1"
+                        + " join Po1VO po1 on (po1.po_header_id = scc1.po_header_id)"
+                        + " join Scc2VO scc2 on (scc2.scc1_id = scc1.scc1_id)"
+                        + " join Po2VO po2 on (po2.po_line_id = scc2.po_line_id)"
+                        + " join StaffVO staff on (staff.id = scc1.employee_number)"
+                        + " join ItemVO item on (item.item_id = po2.item_id)"
 
-                  jpql += " where ( :shipment_num is null or scc1.shipment_num = :shipment_num )";
-                  jpql += "   and ( :deliver_to_location is null or scc1.deliver_to_location = :deliver_to_location )";
-                  jpql += "   and ( :staff_name is null or staff.name = :staff_name )";
-                  jpql += "   and ( :cost_center is null or scc2.cost_center = :cost_center )";
-                  jpql += "   and ( :item_name is null or item.item = :item_name )";
+                        + " where ( :shipment_num is null or scc1.shipment_num like :shipment_num2 )"
+                        + "   and ( :deliver_to_location is null or scc1.deliver_to_location like :deliver_to_location2 )"
+                        + "   and ( :staff_name is null or staff.name like :staff_name2 )"
+                        + "   and ( :cost_center is null or scc2.cost_center like :cost_center2 )"
+                        + "   and ( :item_name is null or item.item like :item_name2 )"
 
-                  jpql += " order by scc1.scc1_id desc";
+                        + " order by scc1.scc1_id desc"
+                        ;
 
             TypedQuery<ShipSearchListDTO> tq = em.createQuery(jpql, ShipSearchListDTO.class)
                                                  .setParameter("shipment_num",        shipment_num)
@@ -75,6 +76,11 @@ public class ShipRepository {
                                                  .setParameter("staff_name",          staff_name)
                                                  .setParameter("cost_center",         cost_center)
                                                  .setParameter("item_name",           item_name)
+                                                 .setParameter("shipment_num2",        "%"+shipment_num+"%")
+                                                 .setParameter("deliver_to_location2", "%"+deliver_to_location+"%")
+                                                 .setParameter("staff_name2",          "%"+staff_name+"%")
+                                                 .setParameter("cost_center2",         "%"+cost_center+"%")
+                                                 .setParameter("item_name2",           "%"+item_name+"%")
                                                  .setFirstResult(fromIdx)
                                                  .setMaxResults(maxLimit);
 
@@ -104,25 +110,26 @@ public class ShipRepository {
 
             String shipment_num = map.get("shipment_num");
 
-            String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipSearchOneDTO(";
-                  jpql += "     scc1.scc1_id, scc1.shipment_num, scc1.deliver_to_location,";
-                  jpql += "     scc2.scc2_id, scc2.seq, scc2.quantity_ordered, scc2.need_by_date, scc2.comment, scc2.po_distribution_id,";
-                  jpql += "     po1.po_header_id, po1.po_num,";
-                  jpql += "     po2.po_line_id, po2.unit_price, po2.mat_bpa_agree_qt,";
-                  jpql += "     item.item, item.uom, item.description,";
-                  jpql += "     staff.name";
-                  jpql += " )";
+            String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipSearchOneDTO("
+                        + "     scc1.scc1_id, scc1.shipment_num, scc1.deliver_to_location,"
+                        + "     scc2.scc2_id, scc2.seq, scc2.quantity_ordered, scc2.need_by_date, scc2.comment, scc2.po_distribution_id,"
+                        + "     po1.po_header_id, po1.po_num,"
+                        + "     po2.po_line_id, po2.unit_price, po2.mat_bpa_agree_qt,"
+                        + "     item.item, item.uom, item.description,"
+                        + "     staff.name"
+                        + " )"
 
-                  jpql += " from Scc1VO scc1";
-                  jpql += " join Scc2VO scc2 on (scc2.scc1_id = scc1.scc1_id)";
-                  jpql += " join Po1VO po1 on (po1.po_header_id = scc1.po_header_id)";
-                  jpql += " join Po2VO po2 on (po2.po_line_id = scc2.po_line_id)";
-                  jpql += " join ItemVO item on (item.item_id = po2.item_id)";
-                  jpql += " join StaffVO staff on (staff.id = scc1.employee_number)";
+                        + " from Scc1VO scc1"
+                        + " join Scc2VO scc2 on (scc2.scc1_id = scc1.scc1_id)"
+                        + " join Po1VO po1 on (po1.po_header_id = scc1.po_header_id)"
+                        + " join Po2VO po2 on (po2.po_line_id = scc2.po_line_id)"
+                        + " join ItemVO item on (item.item_id = po2.item_id)"
+                        + " join StaffVO staff on (staff.id = scc1.employee_number)"
 
-                  jpql += " where ( :shipment_num is null or scc1.shipment_num = :shipment_num )";
+                        + " where ( :shipment_num is null or scc1.shipment_num = :shipment_num )"
 
-                  jpql += "order by scc2.seq asc";
+                        + "order by scc2.seq asc"
+                        ;
 
             TypedQuery<ShipSearchOneDTO> tq = em.createQuery(jpql, ShipSearchOneDTO.class);
                                          tq.setParameter("shipment_num", shipment_num);
@@ -156,9 +163,9 @@ public class ShipRepository {
                   jpql += " where ship1.shipment_num like :shipment_num";
                   jpql += " order by ship1.ship1_id desc";
             List<String> res = em.createQuery(jpql, String.class)
-                                .setParameter("shipment_num", "%S"+temp_shipment_num+"%")
-                                .setMaxResults(1)
-                                .getResultList();
+                                 .setParameter("shipment_num", "%S"+temp_shipment_num+"%")
+                                 .setMaxResults(1)
+                                 .getResultList();
 
             if(res.size() > 0) {
                 String[] temp = res.get(0).split("-");
@@ -258,22 +265,27 @@ public class ShipRepository {
                         + "join ItemVO item on item.item_id = po2.item_id "
 
                         + "where po5.destination_subinventory is not null "
-                        + "and ( :shipment_num is null or ship1.shipment_num = :shipment_num ) "
-                        + "and ( :contact_name is null or ship1.contact_name = :contact_name ) "
-                        + "and ( :deliver_to_location is null or scc1.deliver_to_location = :deliver_to_location ) "
-                        + "and ( :subinventory is null or po5.destination_subinventory = :subinventory ) "
-                        + "and ( :item_name is null or item.item = :item_name ) "
+                        + "and ( :shipment_num is null or ship1.shipment_num like :shipment_num2 ) "
+                        + "and ( :contact_name is null or ship1.contact_name like :contact_name2 ) "
+                        + "and ( :deliver_to_location is null or scc1.deliver_to_location like :deliver_to_location2 ) "
+                        + "and ( :subinventory is null or po5.destination_subinventory like :subinventory2 ) "
+                        + "and ( :item_name is null or item.item like :item_name2 ) "
 
                         + "order by ship1.shipment_num desc "
                         ;
 
             resultList = em.createQuery(jpql, ShipCurSearchListDTO.class)
-                                        .setParameter("shipment_num",        shipment_num)
-                                        .setParameter("contact_name",        contact_name)
-                                        .setParameter("deliver_to_location", deliver_to_location)
-                                        .setParameter("subinventory",        subinventory)
-                                        .setParameter("item_name",           item_name)
-                                        .getResultList();
+                           .setParameter("shipment_num",        shipment_num)
+                           .setParameter("contact_name",        contact_name)
+                           .setParameter("deliver_to_location", deliver_to_location)
+                           .setParameter("subinventory",        subinventory)
+                           .setParameter("item_name",           item_name)
+                           .setParameter("shipment_num2",        "%"+shipment_num+"%")
+                           .setParameter("contact_name2",        "%"+contact_name+"%")
+                           .setParameter("deliver_to_location2", "%"+deliver_to_location+"%")
+                           .setParameter("subinventory2",        "%"+subinventory+"%")
+                           .setParameter("item_name2",           "%"+item_name+"%")
+                           .getResultList();
 
             // 중복 데이터 필터
             List<String> selected_num_list = new ArrayList<>();
