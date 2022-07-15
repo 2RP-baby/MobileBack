@@ -34,6 +34,7 @@ public class ShipRepository {
 
         try{
 
+            String  shipment_num        = map.get("shipment_num");
             String  deliver_to_location = map.get("deliver_to_location");
             String  staff_name          = map.get("staff_name");
             String  cost_center         = map.get("cost_center");
@@ -60,20 +61,22 @@ public class ShipRepository {
                   jpql += " join StaffVO staff on (staff.id = scc1.employee_number)";
                   jpql += " join ItemVO item on (item.item_id = po2.item_id)";
 
-                  jpql += " where ( :deliver_to_location is null or scc1.deliver_to_location = :deliver_to_location )";
-                  jpql += " and ( :staff_name is null or staff.name = :staff_name )";
-                  jpql += " and ( :cost_center is null or scc2.cost_center = :cost_center )";
-                  jpql += " and ( :item_name is null or item.item = :item_name )";
+                  jpql += " where ( :shipment_num is null or scc1.shipment_num = :shipment_num )";
+                  jpql += "   and ( :deliver_to_location is null or scc1.deliver_to_location = :deliver_to_location )";
+                  jpql += "   and ( :staff_name is null or staff.name = :staff_name )";
+                  jpql += "   and ( :cost_center is null or scc2.cost_center = :cost_center )";
+                  jpql += "   and ( :item_name is null or item.item = :item_name )";
 
                   jpql += " order by scc1.scc1_id desc";
 
-            TypedQuery<ShipSearchListDTO> tq = em.createQuery(jpql, ShipSearchListDTO.class);
-                                          tq.setParameter("deliver_to_location", deliver_to_location);
-                                          tq.setParameter("staff_name",          staff_name);
-                                          tq.setParameter("cost_center",         cost_center);
-                                          tq.setParameter("item_name",           item_name);
-                                          tq.setFirstResult(fromIdx);
-                                          tq.setMaxResults(maxLimit);
+            TypedQuery<ShipSearchListDTO> tq = em.createQuery(jpql, ShipSearchListDTO.class)
+                                                 .setParameter("shipment_num",        shipment_num)
+                                                 .setParameter("deliver_to_location", deliver_to_location)
+                                                 .setParameter("staff_name",          staff_name)
+                                                 .setParameter("cost_center",         cost_center)
+                                                 .setParameter("item_name",           item_name)
+                                                 .setFirstResult(fromIdx)
+                                                 .setMaxResults(maxLimit);
 
             resultList = tq.getResultList();
 

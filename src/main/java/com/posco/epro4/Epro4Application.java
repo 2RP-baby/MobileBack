@@ -8,7 +8,6 @@ public class Epro4Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Epro4Application.class, args);
-
 	}
 
 }

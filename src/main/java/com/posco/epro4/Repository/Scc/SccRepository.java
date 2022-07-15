@@ -281,7 +281,6 @@ public class SccRepository {
                         + "     po1.comments, "
                         + "     po5.destination_subinventory, "
                         + "     staff.dept_code, staff.name, "
-                        // + "     item.item_id, item.item, "
                         + "     vendor.vendor_name "
                         + ")"
 
