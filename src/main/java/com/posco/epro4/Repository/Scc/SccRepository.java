@@ -138,7 +138,7 @@ public class SccRepository {
                         + "     po5.po_distribution_id, po5.destination_subinventory,"
                         + "     item.item, item.uom, item.description,"
                         + "     vendor.vendor_id, vendor.vendor_name,"
-                        + "     ( po2.mat_bpa_agree_qt - (select (CASE WHEN sum(scc2.quantity_ordered) is null THEN 0 END) "
+                        + "     ( po2.mat_bpa_agree_qt - (select (CASE WHEN sum(scc2.quantity_ordered) is null THEN 0 ELSE sum(scc2.quantity_ordered) END) "
                         + "     AS remaining from Scc2VO scc2 where po2.po_line_id = scc2.po_line_id)"
                         + " ) )"
 
