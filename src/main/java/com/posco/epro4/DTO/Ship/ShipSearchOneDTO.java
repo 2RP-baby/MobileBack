@@ -37,5 +37,6 @@ public class ShipSearchOneDTO {
     private String  uom;
     private String  description;
     // staff
-    private String staff_name;
+    private String  staff_name;
+    private Integer remaining;
 }

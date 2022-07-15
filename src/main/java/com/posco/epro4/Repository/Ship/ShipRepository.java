@@ -116,7 +116,9 @@ public class ShipRepository {
                         + "     po1.po_header_id, po1.po_num,"
                         + "     po2.po_line_id, po2.unit_price, po2.mat_bpa_agree_qt,"
                         + "     item.item, item.uom, item.description,"
-                        + "     staff.name"
+                        + "     staff.name,"
+                        + "     ( scc2.quantity_ordered - (select (CASE WHEN sum(ship2.quantity_shipped) is null THEN 0 ELSE sum(ship2.quantity_shipped) END) "
+                        + "     AS remaining from Ship2VO ship2 where scc2.scc2_id = ship2.scc2_id) )"
                         + " )"
 
                         + " from Scc1VO scc1"
@@ -131,8 +133,8 @@ public class ShipRepository {
                         + "order by scc2.seq asc"
                         ;
 
-            TypedQuery<ShipSearchOneDTO> tq = em.createQuery(jpql, ShipSearchOneDTO.class);
-                                         tq.setParameter("shipment_num", shipment_num);
+            TypedQuery<ShipSearchOneDTO> tq = em.createQuery(jpql, ShipSearchOneDTO.class)
+                                                .setParameter("shipment_num", shipment_num);
 
             resultList = tq.getResultList();
 
