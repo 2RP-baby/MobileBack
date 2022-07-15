@@ -26,5 +26,5 @@ public class SccSearchOneDTO {
     
     private Integer vendor_id;
     private String  vendor_name;
-    private Long    remaining;
+    private Integer    remaining;
 }

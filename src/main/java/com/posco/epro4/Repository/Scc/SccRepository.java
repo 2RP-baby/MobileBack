@@ -132,26 +132,25 @@ public class SccRepository {
 
             String po_num = map.get("po_num");
 
-            String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchOneDTO(";
-                  jpql += "     po1.po_header_id, po1.po_num, po1.comments,";
-                  jpql += "     po2.po_line_id, po2.unit_price, po2.mat_bpa_agree_qt, 0,";
-                  jpql += "     po5.po_distribution_id, po5.destination_subinventory,";
-                  jpql += "     item.item, item.uom, item.description,";
-                  jpql += "     vendor.vendor_id, vendor.vendor_name,";
-                  jpql += "     ( po2.mat_bpa_agree_qt - ( select sum(scc2.quantity_ordered)";
-                  jpql += "                                from Scc2VO scc2";
-                  jpql += "                                where po2.po_line_id = scc2.po_line_id ))";
-                  jpql += " )";
+            String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchOneDTO("
+                        + "     po1.po_header_id, po1.po_num, po1.comments,"
+                        + "     po2.po_line_id, po2.unit_price, po2.mat_bpa_agree_qt, 0,"
+                        + "     po5.po_distribution_id, po5.destination_subinventory,"
+                        + "     item.item, item.uom, item.description,"
+                        + "     vendor.vendor_id, vendor.vendor_name,"
+                        + "     ( po2.mat_bpa_agree_qt - (select (CASE WHEN sum(scc2.quantity_ordered) is null THEN 0 END) "
+                        + "     AS remaining from Scc2VO scc2 where po2.po_line_id = scc2.po_line_id)"
+                        + " ) )"
 
-                  jpql += " from Po1VO po1";
-                  jpql += " join Po2VO po2 on (po2.po_header_id = po1.po_header_id)";
-                  jpql += " join Po5VO po5 on (po5.po_line_id = po2.po_line_id)";
-                  jpql += " join VendorVO vendor on (vendor.vendor_id = po1.vendor_id)";
-                  jpql += " join ItemVO item on (item.item_id = po2.item_id)";
+                        + " from Po1VO po1"
+                        + " join Po2VO po2 on (po2.po_header_id = po1.po_header_id)"
+                        + " join Po5VO po5 on (po5.po_line_id = po2.po_line_id)"
+                        + " join VendorVO vendor on (vendor.vendor_id = po1.vendor_id)"
+                        + " join ItemVO item on (item.item_id = po2.item_id)"
 
-                  jpql += " where ( :po_num is null or po1.po_num = :po_num )";
+                        + " where ( :po_num is null or po1.po_num = :po_num )"
 
-                  jpql += " order by po2.po_line_id asc";
+                        + " order by po2.po_line_id asc";
 
             TypedQuery<SccSearchOneDTO> tq = em.createQuery(jpql, SccSearchOneDTO.class);
                                         tq.setParameter("po_num", po_num);
