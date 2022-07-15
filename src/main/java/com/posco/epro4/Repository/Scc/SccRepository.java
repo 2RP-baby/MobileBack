@@ -41,6 +41,7 @@ public class SccRepository {
             String  vendor_name      = map.get("vendor_name");
             String  item_name        = map.get("item_name");
             Integer page             = PMethod.getStringToInteger(map.get("page"));
+            int     fromIdx          = (page-1) * maxLimit;
 
             String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccSearchListDTO(";
                   jpql += "     po1.po_header_id, po1.po_num, po1.comments,";
@@ -78,8 +79,7 @@ public class SccRepository {
                                          tq.setParameter("subinventory",     subinventory);
                                          tq.setParameter("vendor_name",      vendor_name);
                                          tq.setParameter("item_name",        item_name);
-                                         tq.setFirstResult(((page-1) * maxLimit));
-                                         tq.setMaxResults(maxLimit);
+
             resultList = tq.getResultList();
 
             // return resultList;
@@ -99,13 +99,13 @@ public class SccRepository {
 
             // paging
             List<SccSearchListDTO> sendData = new ArrayList<SccSearchListDTO>();
-            int fromIdx = (page - 1) * maxLimit;
             int size = filteredData.size();
             // out of index
             if(fromIdx >= size || fromIdx < 0) return sendData;
             // 최대 표시 개수보다 적은 경우
-            if(size - fromIdx < maxLimit) maxLimit = size % maxLimit;
-            for(int i = fromIdx, cnt = 0; i < size && cnt < maxLimit; i++, cnt++) {
+            int maxCnt = maxLimit;
+            if(size - fromIdx < maxLimit) maxCnt = size % maxLimit;
+            for(int i = fromIdx, cnt = 0; i < size && cnt < maxCnt; i++, cnt++) {
                 sendData.add(filteredData.get(i));
             }
             return sendData;
@@ -337,8 +337,9 @@ public class SccRepository {
             // out of index
             if(fromIdx >= size || fromIdx < 0) return sendData;
             // 최대 표시 개수보다 적은 경우
-            if(size - fromIdx < maxLimit) maxLimit = size % maxLimit;
-            for(int i = fromIdx, cnt = 0; i < size && cnt < maxLimit; i++, cnt++) {
+            int maxCnt = maxLimit;
+            if(size - fromIdx < maxLimit) maxCnt = size % maxLimit;
+            for(int i = fromIdx, cnt = 0; i < size && cnt < maxCnt; i++, cnt++) {
                 sendData.add(filteredData.get(i));
             }
             return sendData;

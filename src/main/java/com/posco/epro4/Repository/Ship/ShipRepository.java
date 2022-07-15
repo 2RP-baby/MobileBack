@@ -292,8 +292,9 @@ public class ShipRepository {
             // out of index
             if(fromIdx >= size || fromIdx < 0) return sendData;
             // 최대 표시 개수보다 적은 경우
-            if(size - fromIdx < maxLimit) maxLimit = size % maxLimit;
-            for(int i = fromIdx, cnt = 0; i < size && cnt < maxLimit; i++, cnt++) {
+            int maxCnt = maxLimit;
+            if(size - fromIdx < maxLimit) maxCnt = size % maxLimit;
+            for(int i = fromIdx, cnt = 0; i < size && cnt < maxCnt; i++, cnt++) {
                 sendData.add(filteredData.get(i));
             }
             return sendData;
