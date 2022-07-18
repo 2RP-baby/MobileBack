@@ -294,7 +294,7 @@ public class SccRepository {
             String jpql = "select distinct new com.posco.epro4.DTO.Scc.SccCurSearchListDTO("
                         + "     scc1.shipment_num, scc1.send_date, "
                         + "     po1.comments, "
-                        + "     po5.destination_subinventory, "
+                        + "     scc1.subinventory, "
                         + "     staff.dept_code, staff.name, "
                         + "     vendor.vendor_name "
                         + ")"
@@ -312,7 +312,7 @@ public class SccRepository {
                         + "  and ( :shipment_num is null or scc1.shipment_num like :shipment_num2 ) "
                         + "  and ( :staff_name is null or staff.name like :staff_name2 ) "
                         + "  and ( :deliver_to_location is null or scc1.deliver_to_location like :deliver_to_location2 ) "
-                        + "  and ( :subinventory is null or po5.destination_subinventory like :subinventory2 ) "
+                        + "  and ( :subinventory is null or scc1.subinventory like :subinventory2 ) "
                         + "  and ( :vendor_name is null or vendor.vendor_name like :vendor_name2 ) "
                         + "  and ( :item_name is null or item.item like :item_name2 ) "
 

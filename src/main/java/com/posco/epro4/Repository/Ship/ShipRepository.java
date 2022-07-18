@@ -64,7 +64,7 @@ public class ShipRepository {
                         + " where ( :shipment_num is null or scc1.shipment_num like :shipment_num2 )"
                         + "   and ( :deliver_to_location is null or scc1.deliver_to_location like :deliver_to_location2 )"
                         + "   and ( :staff_name is null or staff.name like :staff_name2 )"
-                        + "   and ( :cost_center is null or scc2.cost_center like :cost_center2 )"
+                        + "   and ( :cost_center is null or scc1.subinventory like :cost_center2 )"
                         + "   and ( :item_name is null or item.item like :item_name2 )"
 
                         + " order by scc1.scc1_id desc"
@@ -256,7 +256,7 @@ public class ShipRepository {
             String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipCurSearchListDTO("
                         + "     ship1.shipment_num, ship1.send_date, ship1.note_to_receiver, ship1.contact_name, "
                         + "     scc1.deliver_to_location, "
-                        + "     po5.destination_subinventory "
+                        + "     scc1.subinventory "
                         + ")"
             
                         + "from Ship1VO ship1 "
@@ -266,11 +266,11 @@ public class ShipRepository {
                         + "join Po5VO po5 on po5.po_distribution_id = ship2.po_distribution_id "
                         + "join ItemVO item on item.item_id = po2.item_id "
 
-                        + "where po5.destination_subinventory is not null "
+                        + "where scc1.subinventory is not null "
                         + "and ( :shipment_num is null or ship1.shipment_num like :shipment_num2 ) "
                         + "and ( :contact_name is null or ship1.contact_name like :contact_name2 ) "
                         + "and ( :deliver_to_location is null or scc1.deliver_to_location like :deliver_to_location2 ) "
-                        + "and ( :subinventory is null or po5.destination_subinventory like :subinventory2 ) "
+                        + "and ( :subinventory is null or scc1.subinventory like :subinventory2 ) "
                         + "and ( :item_name is null or item.item like :item_name2 ) "
 
                         + "order by ship1.shipment_num desc "
