@@ -14,9 +14,10 @@ public class Po1VO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer po_header_id;
-    private String po_num; //
-    private String comments; // 
+    private String  po_num; //
+    private String  comments; // 
     private Integer vendor_id; // join
+    private String  scc_flag;
     
     // @OneToMany(mappedBy = "po_header_id")
     // private List<Po2VO> po2VoList = new ArrayList<Po2VO>();
