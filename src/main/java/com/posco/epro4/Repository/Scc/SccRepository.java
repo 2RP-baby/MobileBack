@@ -15,6 +15,7 @@ import com.posco.epro4.DTO.Scc.SccSearchOneDTO;
 import com.posco.epro4.DTO.Scc.SccCurSearchListDTO;
 import com.posco.epro4.DTO.Scc.SccSearchInsertedOneDTO;
 import com.posco.epro4.DTO.Scc.SccSearchListDTO;
+import com.posco.epro4.VO.Po.Po1VO;
 import com.posco.epro4.VO.Scc.Scc1VO;
 import com.posco.epro4.VO.Scc.Scc2VO;
 
@@ -223,6 +224,14 @@ public class SccRepository {
 
             em.persist(scc1vo);
             // #endregion scc1
+
+
+            // #region po1
+            Po1VO po1 = em.find(Po1VO.class, po_header_id);
+            po1.setScc_flag("Y");
+            
+            em.persist(po1);
+            // #endregion po1
 
 
             // #region scc2
