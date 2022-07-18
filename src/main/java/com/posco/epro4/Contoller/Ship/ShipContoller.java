@@ -27,7 +27,7 @@ public class ShipContoller {
     @RequestMapping(value = "shipSearchList", method = RequestMethod.POST)
     public Object shipSearchList(@RequestBody HashMap<String, String> map) {
 
-        System.out.println("param : " + map);
+        //System.out.println("param : " + map);
 
         PMethod.setEmptyValueInMap(map, null);
 
@@ -37,7 +37,7 @@ public class ShipContoller {
     @RequestMapping(value = "shipSearchOne", method = RequestMethod.POST)
     public Object shipSearchOne(@RequestBody HashMap<String, String> map) {
 
-        System.out.println("param : " + map);
+        //System.out.println("param : " + map);
 
         PMethod.setEmptyValueInMap(map, null);
 
@@ -47,7 +47,7 @@ public class ShipContoller {
     @RequestMapping(value = "shipInsertOne", method = RequestMethod.POST)
     public Object shipInsertOne(@RequestBody ShipInsertOneReqDTO dto) {
 
-        System.out.println("param : " + dto);
+        //System.out.println("param : " + dto);
 
         HashMap<String, String> ship1 = dto.getShip1();
         List<HashMap<String, String>> ship2List = dto.getShip2List();
@@ -63,7 +63,7 @@ public class ShipContoller {
     @RequestMapping(value = "shipCurSearchList", method = RequestMethod.POST)
     public Object shipCurSearchList(@RequestBody HashMap<String, String> map) {
 
-        System.out.println("param : " + map);
+        //System.out.println("param : " + map);
 
         PMethod.setEmptyValueInMap(map, null);
 
@@ -73,7 +73,7 @@ public class ShipContoller {
     @RequestMapping(value = "shipSearchInsertedOne", method = RequestMethod.POST)
     public Object shipSearchInsertedOne(@RequestBody HashMap<String, String> map) {
 
-        System.out.println("param : " + map);
+        //System.out.println("param : " + map);
 
         PMethod.setEmptyValueInMap(map, null);
 

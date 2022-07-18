@@ -30,7 +30,7 @@ public class ShipRepository {
         List<ShipSearchListDTO> resultList = new ArrayList<>();
         EntityManager em = emf.createEntityManager();
         
-        System.out.println("map : " + map.toString());
+        //System.out.println("map : " + map.toString());
 
         try{
 
@@ -104,7 +104,7 @@ public class ShipRepository {
         List<ShipSearchOneDTO> resultList = null;
         EntityManager em = emf.createEntityManager();
         
-        System.out.println("map : " + map.toString());
+        //System.out.println("map : " + map.toString());
 
         try{
 
@@ -242,7 +242,7 @@ public class ShipRepository {
         List<ShipCurSearchListDTO> resultList = null;
         EntityManager em = emf.createEntityManager();
         
-        System.out.println("map : " + map.toString());
+        //System.out.println("map : " + map.toString());
 
         try{
 
@@ -332,7 +332,7 @@ public class ShipRepository {
 
         EntityManager em = emf.createEntityManager();
         
-        System.out.println("map : " + map.toString());
+        //System.out.println("map : " + map.toString());
 
         try{
 

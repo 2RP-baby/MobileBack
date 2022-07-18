@@ -30,7 +30,7 @@ public class SccRepository {
         List<SccSearchListDTO> resultList = null;
         EntityManager em = emf.createEntityManager();
         
-        System.out.println("map : " + map.toString());
+        //System.out.println("map : " + map.toString());
 
         try{
 
@@ -131,7 +131,7 @@ public class SccRepository {
         List<SccSearchOneDTO> resultList = null;
         EntityManager em = emf.createEntityManager();
         
-        System.out.println("map : " + map.toString());
+        //System.out.println("map : " + map.toString());
 
         try{
 
@@ -270,7 +270,7 @@ public class SccRepository {
         List<SccCurSearchListDTO> resultList = null;
         EntityManager em = emf.createEntityManager();
         
-        System.out.println("map : " + map.toString());
+        //System.out.println("map : " + map.toString());
 
         try{
 
@@ -371,7 +371,7 @@ public class SccRepository {
         List<SccSearchInsertedOneDTO> resultList = null;
         EntityManager em = emf.createEntityManager();
         
-        System.out.println("map : " + map.toString());
+        //System.out.println("map : " + map.toString());
 
         try{
 

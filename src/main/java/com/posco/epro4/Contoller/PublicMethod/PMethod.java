@@ -16,14 +16,14 @@ public class PMethod {
      */
     // ? : 앞뒤 스페이스바 제거, 공백만 들어있는 경우 제거를 해줘야할까?
     public static void setEmptyValueInMap(HashMap<String, String> map, String value) {
-        System.out.println("before map state : " + map.toString());
+        //System.out.println("before map state : " + map.toString());
         for (String key : map.keySet()) {
-            System.out.println("key : " + key + ", value : " + map.get(key));
+            //System.out.println("key : " + key + ", value : " + map.get(key));
             if (map.get(key) != null)
                 map.get(key).trim();
             map.put(key, (map.get(key) == "" ? null : map.get(key)));
         }
-        System.out.println("after map state : " + map.toString());
+        //System.out.println("after map state : " + map.toString());
     }
 
     /**
