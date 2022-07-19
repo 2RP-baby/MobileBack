@@ -38,6 +38,7 @@ public class ShipRepository {
             String  deliver_to_location = map.get("deliver_to_location");
             String  staff_name          = map.get("staff_name");
             String  cost_center         = map.get("cost_center");
+            String  subinventory        = map.get("cost_center");
             String  item_name           = map.get("item_name");
             Integer page                = PMethod.getStringToInteger(map.get("page"));
             int     fromIdx             = (page-1) * maxLimit;
@@ -64,22 +65,25 @@ public class ShipRepository {
                         + " where ( :shipment_num is null or scc1.shipment_num like :shipment_num2 )"
                         + "   and ( :deliver_to_location is null or scc1.deliver_to_location like :deliver_to_location2 )"
                         + "   and ( :staff_name is null or staff.name like :staff_name2 )"
-                        + "   and ( :cost_center is null or scc2.cost_center like :cost_center2 )"
+                        // + "   and ( :cost_center is null or scc2.cost_center like :cost_center2 )"
+                        + "   and ( :subinventory is null or scc1.subinventory like :subinventory2 )"
                         + "   and ( :item_name is null or item.item like :item_name2 )"
 
                         + " order by scc1.scc1_id desc"
                         ;
 
             TypedQuery<ShipSearchListDTO> tq = em.createQuery(jpql, ShipSearchListDTO.class)
-                                                 .setParameter("shipment_num",        shipment_num)
-                                                 .setParameter("deliver_to_location", deliver_to_location)
-                                                 .setParameter("staff_name",          staff_name)
-                                                 .setParameter("cost_center",         cost_center)
-                                                 .setParameter("item_name",           item_name)
+                                                 .setParameter("shipment_num",         shipment_num)
+                                                 .setParameter("deliver_to_location",  deliver_to_location)
+                                                 .setParameter("staff_name",           staff_name)
+                                                //  .setParameter("cost_center",         cost_center)
+                                                 .setParameter("subinventory",         subinventory)
+                                                 .setParameter("item_name",            item_name)
                                                  .setParameter("shipment_num2",        "%"+shipment_num+"%")
                                                  .setParameter("deliver_to_location2", "%"+deliver_to_location+"%")
                                                  .setParameter("staff_name2",          "%"+staff_name+"%")
-                                                 .setParameter("cost_center2",         "%"+cost_center+"%")
+                                                //  .setParameter("cost_center2",         "%"+cost_center+"%")
+                                                 .setParameter("subinventory2",        "%"+subinventory+"%")
                                                  .setParameter("item_name2",           "%"+item_name+"%")
                                                  .setFirstResult(fromIdx)
                                                  .setMaxResults(maxLimit);
@@ -255,8 +259,8 @@ public class ShipRepository {
 
             String jpql = "select distinct new com.posco.epro4.DTO.Ship.ShipCurSearchListDTO("
                         + "     ship1.shipment_num, ship1.send_date, ship1.note_to_receiver, ship1.contact_name, "
-                        + "     scc1.deliver_to_location, "
-                        + "     po5.destination_subinventory "
+                        + "     scc1.deliver_to_location, scc1.subinventory "
+                        // + "     po5.destination_subinventory "
                         + ")"
             
                         + "from Ship1VO ship1 "
@@ -270,18 +274,19 @@ public class ShipRepository {
                         + "and ( :shipment_num is null or ship1.shipment_num like :shipment_num2 ) "
                         + "and ( :contact_name is null or ship1.contact_name like :contact_name2 ) "
                         + "and ( :deliver_to_location is null or scc1.deliver_to_location like :deliver_to_location2 ) "
-                        + "and ( :subinventory is null or po5.destination_subinventory like :subinventory2 ) "
+                        // + "and ( :subinventory is null or po5.destination_subinventory like :subinventory2 ) "
+                        + "and ( :subinventory is null or scc1.subinventory like :subinventory2 ) "
                         + "and ( :item_name is null or item.item like :item_name2 ) "
 
                         + "order by ship1.shipment_num desc "
                         ;
 
             resultList = em.createQuery(jpql, ShipCurSearchListDTO.class)
-                           .setParameter("shipment_num",        shipment_num)
-                           .setParameter("contact_name",        contact_name)
-                           .setParameter("deliver_to_location", deliver_to_location)
-                           .setParameter("subinventory",        subinventory)
-                           .setParameter("item_name",           item_name)
+                           .setParameter("shipment_num",         shipment_num)
+                           .setParameter("contact_name",         contact_name)
+                           .setParameter("deliver_to_location",  deliver_to_location)
+                           .setParameter("subinventory",         subinventory)
+                           .setParameter("item_name",            item_name)
                            .setParameter("shipment_num2",        "%"+shipment_num+"%")
                            .setParameter("contact_name2",        "%"+contact_name+"%")
                            .setParameter("deliver_to_location2", "%"+deliver_to_location+"%")
