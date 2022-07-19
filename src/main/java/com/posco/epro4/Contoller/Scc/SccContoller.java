@@ -27,7 +27,7 @@ public class SccContoller {
     @RequestMapping(value = "sccSearchList", method = RequestMethod.POST)
     public Object sccSearchList(@RequestBody HashMap<String, String> map) {
 
-        //System.out.println("param : " + map);
+        System.out.println("param : " + map);
 
         PMethod.setEmptyValueInMap(map, null);
 
@@ -37,7 +37,7 @@ public class SccContoller {
     @RequestMapping(value = "sccSearchOne", method = RequestMethod.POST)
     public Object sccSearchOne(@RequestBody HashMap<String, String> map) {
 
-        //System.out.println("param : " + map);
+        System.out.println("param : " + map);
 
         PMethod.setEmptyValueInMap(map, null);
 
@@ -47,7 +47,7 @@ public class SccContoller {
     @RequestMapping(value = "sccInsertOne", method = RequestMethod.POST)
     public Object sccInsertOne(@RequestBody SccInsertOneReqDTO dto) {
 
-        //System.out.println("param : " + dto);
+        System.out.println("param : " + dto);
 
         HashMap<String, String> scc1 = dto.getScc1();
         List<HashMap<String, String>> scc2List = dto.getScc2List();
@@ -63,7 +63,7 @@ public class SccContoller {
     @RequestMapping(value = "sccCurSearchList", method = RequestMethod.POST)
     public Object sccCurSearchList(@RequestBody HashMap<String, String> map) {
 
-        //System.out.println("param : " + map);
+        System.out.println("param : " + map);
 
         PMethod.setEmptyValueInMap(map, null);
 
@@ -73,7 +73,7 @@ public class SccContoller {
     @RequestMapping(value = "sccSearchInsertedOne", method = RequestMethod.POST)
     public Object sccSearchInsertedOne(@RequestBody HashMap<String, String> map) {
 
-        //System.out.println("param : " + map);
+        System.out.println("param : " + map);
 
         PMethod.setEmptyValueInMap(map, null);
 
