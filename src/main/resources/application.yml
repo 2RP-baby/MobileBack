@@ -12,7 +12,7 @@ eureka:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://postgresql1.cziyl6rwn9rl.ap-northeast-2.rds.amazonaws.com/EPRO4
+    url: jdbc:postgresql://singdb.cnnu2ikv0w40.ap-southeast-1.rds.amazonaws.com/EPRO4
     username: postgres
     password: 1q2w3e4r
     # Connection Pool

@@ -13,9 +13,10 @@ public class ItemVO {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private Integer item_id;
-    private String item;
-    private String description;
-    private String uom;
+    private String  item;
+    private String  description;
+    private String  uom;
+    private Integer use_cnt;
     // private Integer category_id;
     // private String category;
     // private Integer organization_id;

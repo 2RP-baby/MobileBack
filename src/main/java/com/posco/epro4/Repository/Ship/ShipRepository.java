@@ -15,6 +15,8 @@ import com.posco.epro4.DTO.Ship.ShipCurSearchListDTO;
 import com.posco.epro4.DTO.Ship.ShipSearchInsertedOneDTO;
 import com.posco.epro4.DTO.Ship.ShipSearchListDTO;
 import com.posco.epro4.DTO.Ship.ShipSearchOneDTO;
+import com.posco.epro4.VO.Po.Po2VO;
+import com.posco.epro4.VO.Public.ItemVO;
 import com.posco.epro4.VO.Ship.Ship1VO;
 import com.posco.epro4.VO.Ship.Ship2VO;
 
@@ -222,6 +224,23 @@ public class ShipRepository {
                 em.persist(ship2vo);
             }
             // #endregion ship2
+
+
+
+            // #region item
+            for (HashMap<String,String> ship2 : ship2List) {
+
+                int po_line_id = PMethod.getStringToInteger(ship2.get("po_line_id"));
+                Po2VO po2 = em.find(Po2VO.class, po_line_id);
+                int item_id = po2.getItem_id();
+                String jpqli = "select i from ItemVO i where item_id = :item_id";
+                ItemVO item = em.createQuery(jpqli, ItemVO.class).setParameter("item_id", item_id).getResultList().get(0);
+                Integer use_cnt = item.getUse_cnt();
+                item.setUse_cnt(use_cnt+1);
+
+            }
+
+            // #endregion item
 
             tx.commit();
 
